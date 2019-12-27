@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>pc</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <!-- <link rel="shortcut icon" href="favicon.ico"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 默认使用webkit内核 -->
+    <meta name="renderer" content="webkit">
+    <link href="" rel="stylesheet">
+    <style></style>
+</head>
+
+<body>
+    <div></div>
+    <script>
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            //必须用双引号
+            body: JSON.stringify({
+                query: `{ 
+                    user(id:"a")  {
+                        name
+                    }
+                 }`
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('888 data returned:', data)
+                /*                 
+                    {
+                        "data": {
+                            "hello": "Hello world!",
+                            "ip": "127.0.0.1"
+                        }
+                    }
+                */
+            });
+    </script>
+</body>
+
+</html>

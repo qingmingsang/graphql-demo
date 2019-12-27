@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>pc</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <!-- <link rel="shortcut icon" href="favicon.ico"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 默认使用webkit内核 -->
+    <meta name="renderer" content="webkit">
+    <link href="" rel="stylesheet">
+    <style></style>
+</head>
+
+<body>
+    <div></div>
+    <script>
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: '{ hello }'
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('111 data returned:', data)
+                /*    
+                    {
+                        "data": {
+                            "hello": "Hello world!"
+                        }
+                    }
+                */
+            });
+
+        //,逗号非必须
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            // body: JSON.stringify({
+            //     query: '{ hello , quoteOfTheDay , random , rollThreeDice }'
+            // })
+            body: JSON.stringify({
+                query: `{ 
+                    hello  
+                    quoteOfTheDay  
+                    random  
+                    rollThreeDice
+                 }`
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('222 data returned:', data)
+                /*                 
+                    {
+                        "data": {
+                            "hello": "Hello world!",
+                            "quoteOfTheDay": "Salvation lies within",
+                            "random": 0.7508906155661705,
+                            "rollThreeDice": [
+                                3,
+                                2,
+                                6
+                            ]
+                        }
+                    } 
+                */
+            });
+
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `{ 
+                    hello  
+                    rollDice(numDice: 3, numSides: 6)
+                 }`
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('333 data returned:', data)
+                /*                 
+                    {
+                        "data": {
+                            "hello": "Hello world!",
+                            "rollDice": [
+                                3,
+                                2,
+                                2
+                            ]
+                        }
+                    }
+                */
+            });
+
+        const dice = 3;
+        const sides = 6;
+        const query = `query RollDice($dice: Int!, $sides: Int) {
+  rollDice(numDice: $dice, numSides: $sides)
+}`;
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query,
+                variables: { dice, sides },
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('444 data returned:', data)
+                /*                 
+                    {
+                        "data": {
+                            "rollDice": [
+                                6,
+                                5,
+                                1
+                            ]
+                        }
+                    }
+                */
+            });
+
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `{ 
+                    hello  
+                    getDie(numSides: 6) {
+                        rollOnce
+                        roll(numRolls: 3)
+                    }
+                 }`
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('555 data returned:', data)
+                /*                 
+                    {
+                        "data": {
+                            "hello": "Hello world!",
+                            "getDie": {
+                                "rollOnce": 6,
+                                "roll": [
+                                        1,
+                                        4,
+                                        4
+                                    ]
+                            }
+                        }
+                    }
+                */
+            });
+
+        let author = 'andy';
+        let content = 'hope is a good thing';
+        let query2 = `
+        mutation CreateMessage($input: MessageInput) {
+            createMessage(input: $input) {
+                id
+            }
+        }
+        `;
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            // body: JSON.stringify({
+            //     mutation: `{
+            //         createMessage(input: {
+            //             author: "andy",
+            //             content: "hope is a good thing",
+            //         }) {
+            //             id
+            //         }
+            //     }`
+            // })//error
+            body: JSON.stringify({
+                query: query2,
+                variables: {
+                    input: {
+                        author,
+                        content,
+                    }
+                }
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('666 data returned:', data)
+                //data:{createMessage: {id: "233"}}
+
+                fetch('/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `{ 
+                            getMessage(id:233)  {
+                                content
+                                author
+                            }
+                            ip
+                        }`
+                    })
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log('777 data returned:', data)
+                        /*                 
+                            {
+                            "data": {
+                                "getMessage": {
+                                    "content": "hope is a good thing",
+                                    "author": "andy"
+                                },
+                                "ip": "127.0.0.1"
+                            }
+                            }
+                        */
+                    });
+            });
+
+
+        fetch('/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            //必须用双引号
+            body: JSON.stringify({
+                query: `{ 
+                    user(id:"a")  {
+                        name
+                    }
+                 }`
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                console.log('888 data returned:', data)
+                /*                 
+                    {
+                        "data": {
+                            "hello": "Hello world!",
+                            "ip": "127.0.0.1"
+                        }
+                    }
+                */
+            });
+    </script>
+</body>
+
+</html>
