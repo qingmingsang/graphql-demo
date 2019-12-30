@@ -24,9 +24,11 @@
                 'Accept': 'application/json',
             },
             //必须用双引号
+            //字段填几个就显示几个(白名单)
             body: JSON.stringify({
                 query: `{ 
                     user(id:"a")  {
+                        id
                         name
                     }
                  }`
